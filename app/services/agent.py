@@ -1,12 +1,15 @@
 import hashlib
 import secrets
-from typing import Dict, Any, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Any, Dict, Optional
+
 from sqlalchemy import select
-from app.models.agent import Agent
-from app.models.wallet import Wallet
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.blockchain import get_blockchain_client
 from app.core.config import settings
+from app.models.agent import Agent
+from app.models.wallet import Wallet
+
 from .base import BaseService
 
 

@@ -1,5 +1,4 @@
-from prometheus_client import Counter, Histogram, Gauge
-import time
+from prometheus_client import Counter, Gauge, Histogram
 
 # Counters
 SPONSORED_TX_COUNT = Counter(

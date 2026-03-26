@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional
 from enum import Enum
+from typing import Any, Dict, Optional
 
 
 class KeyManagementMode(str, Enum):
@@ -15,12 +15,10 @@ class KeyManager(ABC):
     @abstractmethod
     async def get_address(self) -> str:
         """Return the address associated with the managed key."""
-        pass
 
     @abstractmethod
     async def sign_transaction(self, transaction: Dict[str, Any]) -> str:
         """Sign a transaction and return the raw signed transaction."""
-        pass
 
 
 class BlockchainClient(ABC):
@@ -29,7 +27,6 @@ class BlockchainClient(ABC):
     @abstractmethod
     async def get_balance(self, address: str) -> float:
         """Get USDC balance for address."""
-        pass
 
     @abstractmethod
     async def transfer_usdc(
@@ -45,21 +42,17 @@ class BlockchainClient(ABC):
         If key_manager is provided, it will be used to sign the transaction.
         Otherwise, the implementation must manage signing internally.
         """
-        pass
 
     @abstractmethod
     async def create_wallet(self) -> Dict[str, str]:
         """Generate a new wallet (address, private key)."""
-        pass
 
     @abstractmethod
     async def get_transaction_receipt(self, tx_hash: str) -> Dict[str, Any]:
         """Get receipt for a transaction."""
-        pass
 
     @abstractmethod
     async def estimate_gas(
         self, from_address: str, to_address: str, amount: float
     ) -> Dict[str, Any]:
         """Estimate gas for a USDC transfer."""
-        pass

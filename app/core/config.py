@@ -1,7 +1,8 @@
-from pydantic_settings import BaseSettings
-from pydantic import Field, field_validator
-from typing import Optional, List, Literal
 from enum import Enum
+from typing import List, Literal, Optional
+
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings
 
 
 class KeyManagementMode(str, Enum):
@@ -108,8 +109,9 @@ class Settings(BaseSettings):
 
 def get_secret(secret_name: str) -> str:
     """Retrieve secret from AWS Secrets Manager"""
-    import boto3
     import os
+
+    import boto3
 
     region = os.environ.get("KMS_REGION", "us-east-1")
     client = boto3.client("secretsmanager", region_name=region)

@@ -1,11 +1,9 @@
-from functools import wraps
 import time
+from functools import wraps
 
 
 class CircuitBreakerOpenError(Exception):
     """Raised when the circuit breaker is open and the call is not allowed."""
-
-    pass
 
 
 class CircuitBreaker:

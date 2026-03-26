@@ -1,19 +1,19 @@
+import logging
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Optional
-import logging
 
-from app.core.database import get_db
 from app.api.middleware.auth import get_current_agent
+from app.core.database import get_db
+from app.models.agent import Agent
 from app.services.gas_sponsorship import GasSponsorshipService
 from app.services.payment import (
-    PaymentService,
     PaymentAlreadyProcessedError,
     PaymentProcessingError,
+    PaymentService,
 )
-from app.models.agent import Agent
-from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 

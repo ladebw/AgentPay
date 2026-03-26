@@ -1,8 +1,9 @@
-from .base import BlockchainClient, KeyManager, KeyManagementMode
+from app.core.config import settings
+
+from .base import BlockchainClient, KeyManagementMode, KeyManager
+from .kms_key_manager import KMSKeyManager
 from .mock import MockBlockchainClient, MockKeyManager
 from .web3_client import Web3BlockchainClient, Web3KeyManager
-from .kms_key_manager import KMSKeyManager
-from app.core.config import settings
 
 
 def get_blockchain_client() -> BlockchainClient:

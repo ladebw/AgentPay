@@ -1,9 +1,9 @@
 import hashlib
 import time
 import uuid
-from typing import Dict, Any, Optional
-from .base import BlockchainClient, KeyManager, KeyManagementMode
-from app.core.config import settings
+from typing import Any, Dict, Optional
+
+from .base import BlockchainClient, KeyManager
 
 
 class MockKeyManager(KeyManager):

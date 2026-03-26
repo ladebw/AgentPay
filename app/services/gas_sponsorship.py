@@ -1,16 +1,16 @@
-import os
 import logging
-from typing import Optional, Dict, Any
-from web3 import Web3
+import os
+from typing import Any, Dict
+
 from eth_account import Account
-from eth_account._utils.typed_transactions import EIP712TypedData
+
 from app.blockchain.kms_key_manager import KMSKeyManager
 from app.core.config import settings
-from app.utils.circuit_breaker import CircuitBreaker
 from app.monitoring.sponsorship_metrics import (
     record_sponsored_transaction,
     record_sponsorship_failure,
 )
+from app.utils.circuit_breaker import CircuitBreaker
 
 logger = logging.getLogger(__name__)
 

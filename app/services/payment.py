@@ -1,14 +1,15 @@
-import uuid
 import asyncio
-from typing import Optional
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+import uuid
+
 from redis import Redis
-from app.models.payment import Payment, PaymentStatus
-from app.models.invoice import Invoice
-from app.models.agent import Agent
-from app.core.config import settings
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.blockchain import get_blockchain_client
+from app.core.config import settings
+from app.models.agent import Agent
+from app.models.invoice import Invoice
+from app.models.payment import Payment, PaymentStatus
 
 
 class PaymentService:
@@ -146,16 +147,10 @@ class PaymentService:
 class PaymentAlreadyProcessedError(Exception):
     """Raised when a payment with the same idempotency key has already been processed."""
 
-    pass
-
 
 class PaymentProcessingLockError(Exception):
     """Raised when unable to acquire lock for payment processing."""
 
-    pass
-
 
 class PaymentProcessingError(Exception):
     """Generic payment processing error."""
-
-    pass

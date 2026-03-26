@@ -1,19 +1,20 @@
 import asyncio
+from typing import Any, Dict
+
 import boto3
 from botocore.exceptions import ClientError
-from typing import Dict, Any
-from .base import KeyManager
-from cryptography.hazmat.primitives.serialization import load_der_public_key
 from cryptography.hazmat.primitives import serialization
-from eth_keys import KeyAPI
-import web3
+from cryptography.hazmat.primitives.serialization import load_der_public_key
 from eth_account import Account
 from eth_account._utils.legacy_transactions import (
-    serializable_unsigned_transaction_from_dict,
     encode_transaction,
+    serializable_unsigned_transaction_from_dict,
 )
 from eth_account._utils.signing import to_eth_v
 from eth_account.typed_transactions import TypedTransaction
+from eth_keys import KeyAPI
+
+from .base import KeyManager
 
 
 class KMSKeyManager(KeyManager):
@@ -21,8 +22,6 @@ class KMSKeyManager(KeyManager):
 
     class KMSKeyManagerError(Exception):
         """Base exception for KMS key manager errors."""
-
-        pass
 
     def __init__(self, key_id: str, region: str = "us-east-1"):
         self.key_id = key_id

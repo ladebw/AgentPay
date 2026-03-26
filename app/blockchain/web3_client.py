@@ -1,10 +1,11 @@
 import json
 import os
-from typing import Dict, Any, Optional
-from web3 import Web3
+from typing import Any, Dict, Optional
+
 from eth_account import Account
+from web3 import Web3
+
 from .base import BlockchainClient, KeyManager
-from app.core.config import settings
 
 
 class Web3KeyManager(KeyManager):

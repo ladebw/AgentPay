@@ -1,8 +1,7 @@
-from typing import Type, TypeVar, Generic, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Generic, Optional, Type, TypeVar
+
 from sqlalchemy import select
-from fastapi import Depends
-from app.core.database import get_db
+from sqlalchemy.ext.asyncio import AsyncSession
 
 T = TypeVar("T")
 

@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.database import get_db
+
 from app.api.middleware.auth import get_current_agent
-from app.models.agent import Agent
 from app.blockchain import get_blockchain_client
+from app.core.database import get_db
+from app.models.agent import Agent
 
 router = APIRouter(prefix="/wallets", tags=["wallets"])
 

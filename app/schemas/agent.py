@@ -1,7 +1,8 @@
-from pydantic import BaseModel, Field
-from typing import Dict, Any, Optional
 import uuid as uuid_pkg
 from datetime import datetime
+from typing import Any, Dict, Optional
+
+from pydantic import BaseModel, Field
 
 
 class AgentBase(BaseModel):

@@ -1,16 +1,15 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session
 
 Base = declarative_base()
 
 # Import all models here to ensure they are registered with Base
 from .agent import Agent
-from .wallet import Wallet
+from .idempotency_key import IdempotencyKey
 from .invoice import Invoice
 from .payment import Payment
-from .webhook import Webhook
 from .transaction import BlockchainTransaction
-from .idempotency_key import IdempotencyKey
+from .wallet import Wallet
+from .webhook import Webhook
 
 __all__ = [
     "Base",
