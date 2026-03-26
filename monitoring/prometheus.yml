@@ -1,0 +1,31 @@
+# Prometheus configuration for AGENTPAY staging/production
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'agentpay'
+    static_configs:
+      - targets: ['agentpay:8000']
+        labels:
+          environment: 'staging'
+          service: 'agentpay'
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']  # If you run postgres-exporter
+    # Enable if you have postgres-exporter
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']  # If you run redis-exporter
+    # Enable if you have redis-exporter
+
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']  # If you run node-exporter
+    # Enable for host metrics
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']

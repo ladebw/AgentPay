@@ -1,0 +1,62 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "AGENTPAY Production Metrics",
+    "tags": ["agentpay", "blockchain", "kms"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "KMS API Call Latency (p95)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(kms_api_call_duration_seconds_bucket[5m]))",
+            "legendFormat": "{{method}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "Signature Success/Failure Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(kms_signature_success_total[5m]) / rate(kms_signature_total[5m]) * 100",
+            "legendFormat": "Success Rate"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "Public Key Cache Hit Ratio",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "kms_public_key_cache_hits / kms_public_key_cache_requests * 100",
+            "legendFormat": "Hit Ratio"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+      },
+      {
+        "id": 4,
+        "title": "KMS Key State Health",
+        "type": "heatmap",
+        "targets": [
+          {
+            "expr": "kms_key_state",
+            "legendFormat": "State"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+      }
+    ],
+    "schemaVersion": 37,
+    "version": 0
+  },
+  "folderId": 0,
+  "overwrite": false
+}
