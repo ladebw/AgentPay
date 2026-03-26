@@ -7,7 +7,11 @@ import logging
 from app.core.database import get_db
 from app.api.middleware.auth import get_current_agent
 from app.services.gas_sponsorship import GasSponsorshipService
-from app.services.payment import PaymentService, PaymentAlreadyProcessedError, PaymentProcessingError
+from app.services.payment import (
+    PaymentService,
+    PaymentAlreadyProcessedError,
+    PaymentProcessingError,
+)
 from app.models.agent import Agent
 from app.core.config import settings
 
@@ -18,6 +22,7 @@ router = APIRouter(prefix="/sponsor", tags=["sponsor"])
 
 class SponsorPaymentRequest(BaseModel):
     """Request to create a gas-sponsored payment."""
+
     invoice_id: str
     amount: float
     # Optional idempotency key; if not provided, derived from agent+invoice
@@ -26,6 +31,7 @@ class SponsorPaymentRequest(BaseModel):
 
 class SponsorPaymentResponse(BaseModel):
     """Response for a sponsored payment."""
+
     payment_id: str
     transaction_hash: Optional[str] = None
     sponsor_transaction_hash: Optional[str] = None
@@ -52,7 +58,7 @@ async def create_sponsored_payment(
     if not sponsorship_service.is_enabled():
         raise HTTPException(
             status_code=status.HTTP_412_PRECONDITION_FAILED,
-            detail="Gas sponsorship is not enabled or configured"
+            detail="Gas sponsorship is not enabled or configured",
         )
 
     # 2. Check agent eligibility (optional whitelist, spending caps)
@@ -60,7 +66,7 @@ async def create_sponsored_payment(
     if not eligibility.get("eligible", False):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Agent not eligible for gas sponsorship"
+            detail="Agent not eligible for gas sponsorship",
         )
 
     # 3. Process payment with sponsorship
@@ -68,9 +74,7 @@ async def create_sponsored_payment(
     try:
         # First, create payment record (sponsored flag will be set later)
         payment = await payment_service.process_payment(
-            agent_id=str(agent.id),
-            invoice_id=request.invoice_id,
-            amount=request.amount
+            agent_id=str(agent.id), invoice_id=request.invoice_id, amount=request.amount
         )
 
         # TODO: Integrate actual sponsorship logic
@@ -85,24 +89,23 @@ async def create_sponsored_payment(
             sponsor_transaction_hash=payment.sponsor_transaction_hash,
             sponsored=payment.sponsored,
             status=payment.status,
-            message="Payment created with sponsorship (placeholder)"
+            message="Payment created with sponsorship (placeholder)",
         )
     except PaymentAlreadyProcessedError as e:
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Payment already processed"
+            status_code=status.HTTP_409_CONFLICT, detail="Payment already processed"
         )
     except PaymentProcessingError as e:
         logger.error(f"Payment processing failed: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Payment processing failed"
+            detail="Payment processing failed",
         )
     except Exception as e:
         logger.exception(f"Unexpected error in sponsored payment: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error"
+            detail="Internal server error",
         )
 
 
@@ -115,7 +118,7 @@ async def get_sponsorship_eligibility(
     if not sponsorship_service.is_enabled():
         raise HTTPException(
             status_code=status.HTTP_412_PRECONDITION_FAILED,
-            detail="Gas sponsorship is not enabled"
+            detail="Gas sponsorship is not enabled",
         )
     eligibility = await sponsorship_service.get_sponsorship_status(str(agent.id))
     return eligibility

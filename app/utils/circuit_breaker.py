@@ -4,6 +4,7 @@ import time
 
 class CircuitBreakerOpenError(Exception):
     """Raised when the circuit breaker is open and the call is not allowed."""
+
     pass
 
 
@@ -14,7 +15,7 @@ class CircuitBreaker:
         self.failures = 0
         self.last_failure_time = 0
         self.state = "CLOSED"  # CLOSED, OPEN, HALF_OPEN
-    
+
     def call(self, func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -23,7 +24,7 @@ class CircuitBreaker:
                     self.state = "HALF_OPEN"
                 else:
                     raise CircuitBreakerOpenError()
-            
+
             try:
                 result = func(*args, **kwargs)
                 if self.state == "HALF_OPEN":
@@ -36,12 +37,13 @@ class CircuitBreaker:
                 if self.failures >= self.failure_threshold:
                     self.state = "OPEN"
                 raise
+
         return wrapper
 
 
 # Example usage:
 # kms_circuit_breaker = CircuitBreaker()
-# 
+#
 # @kms_circuit_breaker.call
 # def sign_with_kms(transaction):
 #     return kms_key_manager.sign_transaction(transaction)

@@ -15,7 +15,9 @@ class Wallet(Base):
     __tablename__ = "wallets"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    agent_id = Column(PG_UUID(as_uuid=True), ForeignKey("agents.id"), nullable=False, index=True)
+    agent_id = Column(
+        PG_UUID(as_uuid=True), ForeignKey("agents.id"), nullable=False, index=True
+    )
     address = Column(String, nullable=False, unique=True, index=True)
     chain_id = Column(String, nullable=False, default="137")  # Polygon
     token_address = Column(String, nullable=False)  # USDC contract address

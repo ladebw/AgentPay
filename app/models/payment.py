@@ -24,9 +24,15 @@ class Payment(Base):
     __tablename__ = "payments"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    invoice_id = Column(PG_UUID(as_uuid=True), ForeignKey("invoices.id"), nullable=False, index=True)
-    from_agent_id = Column(PG_UUID(as_uuid=True), ForeignKey("agents.id"), nullable=False, index=True)
-    to_agent_id = Column(PG_UUID(as_uuid=True), ForeignKey("agents.id"), nullable=False, index=True)
+    invoice_id = Column(
+        PG_UUID(as_uuid=True), ForeignKey("invoices.id"), nullable=False, index=True
+    )
+    from_agent_id = Column(
+        PG_UUID(as_uuid=True), ForeignKey("agents.id"), nullable=False, index=True
+    )
+    to_agent_id = Column(
+        PG_UUID(as_uuid=True), ForeignKey("agents.id"), nullable=False, index=True
+    )
     amount = Column(Numeric(18, 6), nullable=False)
     transaction_hash = Column(String, unique=True, index=True)
     block_number = Column(Integer, nullable=True)
@@ -44,9 +50,15 @@ class Payment(Base):
 
     # Relationships
     invoice = relationship("Invoice", back_populates="payments")
-    from_agent = relationship("Agent", foreign_keys=[from_agent_id], back_populates="payments_sent")
-    to_agent = relationship("Agent", foreign_keys=[to_agent_id], back_populates="payments_received")
-    blockchain_transaction = relationship("BlockchainTransaction", uselist=False, back_populates="payment")
+    from_agent = relationship(
+        "Agent", foreign_keys=[from_agent_id], back_populates="payments_sent"
+    )
+    to_agent = relationship(
+        "Agent", foreign_keys=[to_agent_id], back_populates="payments_received"
+    )
+    blockchain_transaction = relationship(
+        "BlockchainTransaction", uselist=False, back_populates="payment"
+    )
 
     def __repr__(self):
         return f"<Payment(id={self.id}, amount={self.amount}, status='{self.status}')>"

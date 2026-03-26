@@ -9,24 +9,27 @@ def get_blockchain_client() -> BlockchainClient:
     """Factory function to get appropriate blockchain client based on settings."""
     if settings.key_management_mode == KeyManagementMode.MOCK:
         return MockBlockchainClient()
-    
+
     # Real blockchain client (Polygon)
     client = Web3BlockchainClient(
         rpc_url=settings.rpc_url,
         usdc_address=settings.usdc_address,
-        private_key=settings.private_key if settings.key_management_mode == KeyManagementMode.NON_CUSTODIAL else None
+        private_key=(
+            settings.private_key
+            if settings.key_management_mode == KeyManagementMode.NON_CUSTODIAL
+            else None
+        ),
     )
-    
+
     if settings.key_management_mode == KeyManagementMode.KMS:
         if not settings.kms_key_id:
             raise ValueError("KMS key ID must be set when using KMS mode")
         key_manager = KMSKeyManager(
-            key_id=settings.kms_key_id,
-            region=settings.kms_region or "us-east-1"
+            key_id=settings.kms_key_id, region=settings.kms_region or "us-east-1"
         )
         client.key_manager = key_manager
     # For NON_CUSTODIAL mode, private_key is already set in client
-    
+
     return client
 
 

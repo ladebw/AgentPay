@@ -23,7 +23,9 @@ class Webhook(Base):
     __tablename__ = "webhooks"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    agent_id = Column(PG_UUID(as_uuid=True), ForeignKey("agents.id"), nullable=False, index=True)
+    agent_id = Column(
+        PG_UUID(as_uuid=True), ForeignKey("agents.id"), nullable=False, index=True
+    )
     url = Column(String, nullable=False)
     event_types = Column(JSON, nullable=False)  # List of event types
     secret = Column(String, nullable=False)  # Signing secret

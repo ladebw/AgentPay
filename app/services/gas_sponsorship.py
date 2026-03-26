@@ -7,7 +7,10 @@ from eth_account._utils.typed_transactions import EIP712TypedData
 from app.blockchain.kms_key_manager import KMSKeyManager
 from app.core.config import settings
 from app.utils.circuit_breaker import CircuitBreaker
-from app.monitoring.sponsorship_metrics import record_sponsored_transaction, record_sponsorship_failure
+from app.monitoring.sponsorship_metrics import (
+    record_sponsored_transaction,
+    record_sponsorship_failure,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -30,10 +33,9 @@ class GasSponsorshipService:
             try:
                 # Conditional import to avoid hard dependency
                 from openzeppelin_defender_api import Relayer
+
                 self.relayer_client = Relayer(
-                    api_key=api_key,
-                    api_secret=api_secret,
-                    relayer_id=relayer_id
+                    api_key=api_key, api_secret=api_secret, relayer_id=relayer_id
                 )
                 logger.info("Defender Relayer client initialized")
             except ImportError:
@@ -61,7 +63,7 @@ class GasSponsorshipService:
         from_address: str,
         to_address: str,
         value: int,
-        data: str = "0x"
+        data: str = "0x",
     ) -> Dict[str, Any]:
         """
         Send transaction with gas sponsorship via Defender Relayer.
@@ -85,9 +87,7 @@ class GasSponsorshipService:
 
         # Circuit breaker to protect against API failures
         circuit_breaker = CircuitBreaker(
-            name="defender_relayer",
-            failure_threshold=5,
-            recovery_timeout=60
+            name="defender_relayer", failure_threshold=5, recovery_timeout=60
         )
 
         with circuit_breaker:
@@ -97,7 +97,7 @@ class GasSponsorshipService:
                     from_address=from_address,
                     to_address=to_address,
                     value=value,
-                    data=data
+                    data=data,
                 )
 
                 # 2. Sign typed data with KMS
@@ -109,16 +109,14 @@ class GasSponsorshipService:
                 # Record success metrics
                 # TODO: obtain actual gas cost; for now pass 0.0
                 record_sponsored_transaction(
-                    chain=self.network,
-                    agent_tier="default",
-                    gas_cost_usd=0.0
+                    chain=self.network, agent_tier="default", gas_cost_usd=0.0
                 )
 
                 # 4. Return transaction hash
                 return {
                     "transaction_hash": tx_hash,
                     "sponsored": True,
-                    "relayer": "defender"
+                    "relayer": "defender",
                 }
             except Exception as e:
                 # Record failure metrics
@@ -126,11 +124,7 @@ class GasSponsorshipService:
                 raise
 
     def _build_typed_data(
-        self,
-        from_address: str,
-        to_address: str,
-        value: int,
-        data: str
+        self, from_address: str, to_address: str, value: int, data: str
     ) -> Dict[str, Any]:
         """Construct EIP-712 typed data for meta-transaction."""
         # TODO: Implement proper typed data structure based on Forwarder contract
@@ -141,7 +135,7 @@ class GasSponsorshipService:
                     {"name": "name", "type": "string"},
                     {"name": "version", "type": "string"},
                     {"name": "chainId", "type": "uint256"},
-                    {"name": "verifyingContract", "type": "address"}
+                    {"name": "verifyingContract", "type": "address"},
                 ],
                 "ForwardRequest": [
                     {"name": "from", "type": "address"},
@@ -149,15 +143,15 @@ class GasSponsorshipService:
                     {"name": "value", "type": "uint256"},
                     {"name": "gas", "type": "uint256"},
                     {"name": "nonce", "type": "uint256"},
-                    {"name": "data", "type": "bytes"}
-                ]
+                    {"name": "data", "type": "bytes"},
+                ],
             },
             "primaryType": "ForwardRequest",
             "domain": {
                 "name": "GaslessForwarder",
                 "version": "1",
                 "chainId": 137,  # Polygon mainnet
-                "verifyingContract": "0x..."  # Should be from config
+                "verifyingContract": "0x...",  # Should be from config
             },
             "message": {
                 "from": from_address,
@@ -165,15 +159,13 @@ class GasSponsorshipService:
                 "value": value,
                 "gas": 100000,  # Estimate
                 "nonce": 0,  # Need to fetch from forwarder contract
-                "data": data
-            }
+                "data": data,
+            },
         }
         return typed_data
 
     async def _sign_typed_data(
-        self,
-        kms_manager: KMSKeyManager,
-        typed_data: Dict[str, Any]
+        self, kms_manager: KMSKeyManager, typed_data: Dict[str, Any]
     ) -> str:
         """Sign EIP-712 typed data using KMS."""
         # Convert typed data to signable hash
@@ -183,13 +175,13 @@ class GasSponsorshipService:
         r, s, recovery_id = await kms_manager.sign_hash(signable_hash)
         # Encode signature as 65-byte hex string (r, s, v) where v = recovery_id + 27
         v = recovery_id + 27
-        signature = (r.to_bytes(32, 'big') + s.to_bytes(32, 'big') + v.to_bytes(1, 'big')).hex()
+        signature = (
+            r.to_bytes(32, "big") + s.to_bytes(32, "big") + v.to_bytes(1, "big")
+        ).hex()
         return signature
 
     async def _submit_to_defender(
-        self,
-        typed_data: Dict[str, Any],
-        signature: str
+        self, typed_data: Dict[str, Any], signature: str
     ) -> str:
         """Submit signed meta-transaction to Defender Relayer."""
         if not self.relayer_client:
@@ -198,12 +190,14 @@ class GasSponsorshipService:
             # Construct a transaction from typed data and signature
             # For now, we'll just call send_transaction with placeholder
             # This will fail if the SDK is not properly configured, but we catch.
-            tx = await self.relayer_client.send_transaction({
-                'to': typed_data['message']['to'],
-                'data': typed_data['message']['data'],
-                'value': typed_data['message']['value'],
-                'gas': typed_data['message']['gas'],
-            })
+            tx = await self.relayer_client.send_transaction(
+                {
+                    "to": typed_data["message"]["to"],
+                    "data": typed_data["message"]["data"],
+                    "value": typed_data["message"]["value"],
+                    "gas": typed_data["message"]["gas"],
+                }
+            )
             return tx.hash
         except Exception as e:
             logger.error(f"Defender submission failed: {e}")
@@ -216,5 +210,5 @@ class GasSponsorshipService:
             "eligible": True,
             "daily_limit_usd": settings.max_sponsor_amount_usd,
             "remaining_today_usd": settings.max_sponsor_amount_usd,
-            "whitelisted": agent_id in settings.sponsor_whitelist
+            "whitelisted": agent_id in settings.sponsor_whitelist,
         }

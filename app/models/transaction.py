@@ -22,7 +22,9 @@ class BlockchainTransaction(Base):
     __tablename__ = "blockchain_transactions"
 
     id = Column(PG_UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    payment_id = Column(PG_UUID(as_uuid=True), ForeignKey("payments.id"), nullable=False, index=True)
+    payment_id = Column(
+        PG_UUID(as_uuid=True), ForeignKey("payments.id"), nullable=False, index=True
+    )
     hash = Column(String, unique=True, index=True)
     from_address = Column(String, nullable=False)
     to_address = Column(String, nullable=False)
@@ -30,7 +32,9 @@ class BlockchainTransaction(Base):
     gas_used = Column(Integer, nullable=True)
     gas_price_gwei = Column(Numeric(18, 9), nullable=True)
     block_number = Column(Integer, nullable=True)
-    status = Column(String, nullable=False, default=BlockchainTransactionStatus.PENDING, index=True)
+    status = Column(
+        String, nullable=False, default=BlockchainTransactionStatus.PENDING, index=True
+    )
     created_at = Column(DateTime, default=utcnow, nullable=False)
     updated_at = Column(DateTime, default=utcnow, onupdate=utcnow, nullable=False)
 
