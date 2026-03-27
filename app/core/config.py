@@ -1,6 +1,8 @@
+import os
 from enum import Enum
 from typing import List, Literal, Optional
 
+import boto3
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings
 
@@ -87,8 +89,6 @@ class Settings(BaseSettings):
     def validate_key_management_mode(cls, v, info):
         environment = info.data.get("environment", "development")
         if environment == "production":
-            from .config import KeyManagementMode
-
             if v == KeyManagementMode.MOCK:
                 raise ValueError("Cannot use MOCK key management mode in production")
             if v == KeyManagementMode.KMS and not info.data.get("kms_key_id"):
@@ -109,10 +109,6 @@ class Settings(BaseSettings):
 
 def get_secret(secret_name: str) -> str:
     """Retrieve secret from AWS Secrets Manager"""
-    import os
-
-    import boto3
-
     region = os.environ.get("KMS_REGION", "us-east-1")
     client = boto3.client("secretsmanager", region_name=region)
     response = client.get_secret_value(SecretId=secret_name)

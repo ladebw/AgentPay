@@ -47,7 +47,8 @@ class MockBlockchainClient(BlockchainClient):
         self.balances[to_address] = self.balances.get(to_address, 0.0) + amount
 
         # Generate mock transaction hash
-        tx_hash = f"0x{hashlib.sha256(f'{from_address}{to_address}{amount}{time.time()}'.encode()).hexdigest()[:64]}"
+        data = f"{from_address}{to_address}{amount}{time.time()}"
+        tx_hash = f"0x{hashlib.sha256(data.encode()).hexdigest()[:64]}"
 
         tx_result = {
             "hash": tx_hash,

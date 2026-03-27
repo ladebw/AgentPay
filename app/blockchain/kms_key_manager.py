@@ -185,8 +185,6 @@ class KMSKeyManager(KeyManager):
             # For message signing, v = candidate + 27
             v = candidate + 27
             # Recover address from signature
-            from eth_account import Account
-
             signature_bytes = (
                 r.to_bytes(32, "big") + s.to_bytes(32, "big") + v.to_bytes(1, "big")
             )

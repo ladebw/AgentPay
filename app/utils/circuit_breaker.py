@@ -29,7 +29,7 @@ class CircuitBreaker:
                     self.state = "CLOSED"
                     self.failures = 0
                 return result
-            except Exception as e:
+            except Exception:
                 self.failures += 1
                 self.last_failure_time = time.time()
                 if self.failures >= self.failure_threshold:

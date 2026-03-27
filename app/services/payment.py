@@ -1,6 +1,7 @@
 import asyncio
 import uuid
 
+from eth_account import Account
 from redis import Redis
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -116,8 +117,6 @@ class PaymentService:
             from_address = await self.blockchain.key_manager.get_address()
         elif hasattr(self.blockchain, "private_key") and self.blockchain.private_key:
             # Derive address from private key (for non-custodial mode)
-            from eth_account import Account
-
             from_address = Account.from_key(self.blockchain.private_key).address
         else:
             # Fallback to payer's wallet address (may not be signable)
@@ -145,7 +144,8 @@ class PaymentService:
 
 
 class PaymentAlreadyProcessedError(Exception):
-    """Raised when a payment with the same idempotency key has already been processed."""
+    """Raised when a payment with the same idempotency key has already
+    been processed."""
 
 
 class PaymentProcessingLockError(Exception):

@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.middleware.auth import get_current_agent
 from app.blockchain import get_blockchain_client
+from app.blockchain.mock import MockBlockchainClient
 from app.core.database import get_db
 from app.models.agent import Agent
 
@@ -40,7 +41,8 @@ async def fund_wallet(
 ):
     """Mock funding for testing (MVP only)."""
     blockchain = get_blockchain_client()
-    # This is a mock operation; in real implementation, you'd need a faucet or transfer from admin.
+    # This is a mock operation; in real implementation, you'd need a faucet
+    # or transfer from admin.
     if isinstance(blockchain, MockBlockchainClient):
         blockchain.balances[current_agent.wallet_address] = (
             blockchain.balances.get(current_agent.wallet_address, 0.0) + amount

@@ -91,7 +91,7 @@ async def create_sponsored_payment(
             status=payment.status,
             message="Payment created with sponsorship (placeholder)",
         )
-    except PaymentAlreadyProcessedError as e:
+    except PaymentAlreadyProcessedError:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="Payment already processed"
         )
