@@ -13,7 +13,6 @@ from .transaction import BlockchainTransaction
 from .wallet import Wallet
 from .webhook import Webhook
 
-
 __all__ = [
     "Base",
     "Agent",
