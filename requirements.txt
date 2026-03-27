@@ -7,8 +7,9 @@ asyncpg==0.29.0
 pydantic==2.5.0
 pydantic-settings==2.1.0
 python-multipart==0.0.6
-web3==6.11.0
-eth-account==0.11.0
+web3==7.14.1
+eth-account==0.13.7
+eth-typing==5.2.1
 redis>=4.5.2,<5.0.0
 slowapi>=0.1.9
 httpx==0.25.2
