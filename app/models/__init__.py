@@ -1,5 +1,10 @@
 from sqlalchemy.orm import DeclarativeBase
 
+
+class Base(DeclarativeBase):
+    pass
+
+
 from .agent import Agent
 from .idempotency_key import IdempotencyKey
 from .invoice import Invoice
@@ -7,10 +12,6 @@ from .payment import Payment
 from .transaction import BlockchainTransaction
 from .wallet import Wallet
 from .webhook import Webhook
-
-
-class Base(DeclarativeBase):
-    pass
 
 
 __all__ = [
