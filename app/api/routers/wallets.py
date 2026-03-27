@@ -24,10 +24,10 @@ async def get_wallet(
         raise HTTPException(status_code=403, detail="Forbidden")
 
     blockchain = get_blockchain_client()
-    balance = await blockchain.get_balance(current_agent.wallet_address)
+    balance = await blockchain.get_balance(current_agent.wallet_address)  # type: ignore
     return {
         "agent_id": agent_id,
-        "wallet_address": current_agent.wallet_address,
+        "wallet_address": current_agent.wallet_address,  # type: ignore
         "balance": balance,
         "currency": "USDC",
     }
@@ -44,12 +44,12 @@ async def fund_wallet(
     # This is a mock operation; in real implementation, you'd need a faucet
     # or transfer from admin.
     if isinstance(blockchain, MockBlockchainClient):
-        blockchain.balances[current_agent.wallet_address] = (
-            blockchain.balances.get(current_agent.wallet_address, 0.0) + amount
+        blockchain.balances[current_agent.wallet_address] = (  # type: ignore
+            blockchain.balances.get(current_agent.wallet_address, 0.0) + amount  # type: ignore
         )
         return {
             "message": f"Funded {amount} USDC",
-            "new_balance": blockchain.balances[current_agent.wallet_address],
+            "new_balance": blockchain.balances[current_agent.wallet_address],  # type: ignore
         }
     else:
         raise HTTPException(

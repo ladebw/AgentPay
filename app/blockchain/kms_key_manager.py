@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import boto3
 from botocore.exceptions import ClientError
@@ -28,9 +28,9 @@ class KMSKeyManager(KeyManager):
         self.region = region
         self.client = boto3.client("kms", region_name=region)
         # Cache the public key address
-        self._address = None
+        self._address: Optional[str] = None
         # Cache the public key bytes
-        self._public_key_bytes = None
+        self._public_key_bytes: Optional[bytes] = None
 
     def validate_kms_key(self):
         """Validate KMS key has correct permissions and type"""
@@ -100,6 +100,7 @@ class KMSKeyManager(KeyManager):
                 self._address = public_key.to_checksum_address()
             except Exception as e:
                 raise self.KMSKeyManagerError(f"Failed to derive Ethereum address: {e}")
+        assert self._address is not None, "Address should have been computed"
         return self._address
 
     async def sign_transaction(self, transaction: Dict[str, Any]) -> str:
@@ -216,6 +217,9 @@ class KMSKeyManager(KeyManager):
                 format=serialization.PublicFormat.UncompressedPoint,
             )
             self._public_key_bytes = uncompressed
+        assert self._public_key_bytes is not None, (
+            "Public key bytes should have been computed"
+        )
         return self._public_key_bytes
 
     def _parse_der_signature(self, der_signature: bytes) -> tuple[int, int]:

@@ -3,6 +3,7 @@ import os
 from typing import Any, Dict
 
 from eth_account import Account
+from eth_account.messages import encode_typed_data
 
 from app.blockchain.kms_key_manager import KMSKeyManager
 from app.core.config import settings
@@ -169,10 +170,9 @@ class GasSponsorshipService:
     ) -> str:
         """Sign EIP-712 typed data using KMS."""
         # Convert typed data to signable hash
-        account = Account()
-        signable_hash = account._hash_eip712_message(typed_data)
+        signable_hash = encode_typed_data(typed_data)
         # Sign hash using KMS key manager
-        r, s, recovery_id = await kms_manager.sign_hash(signable_hash)
+        r, s, recovery_id = await kms_manager.sign_hash(signable_hash.body)
         # Encode signature as 65-byte hex string (r, s, v) where v = recovery_id + 27
         v = recovery_id + 27
         signature = (

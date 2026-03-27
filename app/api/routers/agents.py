@@ -49,7 +49,12 @@ async def update_agent(
 
     update_data = agent_update.dict(exclude_unset=True)
     if "permissions" in update_data:
-        agent = await service.update_permissions(agent_id, update_data["permissions"])
+        updated_agent = await service.update_permissions(
+            agent_id, update_data["permissions"]
+        )
+        if updated_agent is None:
+            raise HTTPException(status_code=404, detail="Agent not found")
+        agent = updated_agent
     if "name" in update_data:
         agent.name = update_data["name"]
         await db.commit()

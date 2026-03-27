@@ -1,9 +1,16 @@
-from typing import Generic, Optional, Type, TypeVar
+from typing import Any, Generic, Optional, Protocol, Type, TypeVar
 
-from sqlalchemy import select
+from sqlalchemy import Column, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-T = TypeVar("T")
+
+class HasID(Protocol):
+    """Protocol for SQLAlchemy models with an id column."""
+
+    id: Column[Any]
+
+
+T = TypeVar("T", bound=HasID)
 
 
 class BaseService(Generic[T]):

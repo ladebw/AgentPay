@@ -79,16 +79,16 @@ async def create_sponsored_payment(
 
         # TODO: Integrate actual sponsorship logic
         # For now, mark as sponsored but not yet implemented
-        payment.sponsored = True
-        payment.sponsor_transaction_hash = None  # Placeholder
+        payment.sponsored = True  # type: ignore
+        payment.sponsor_transaction_hash = None  # type: ignore  # Placeholder
         await db.commit()
 
         return SponsorPaymentResponse(
-            payment_id=str(payment.id),
-            transaction_hash=payment.transaction_hash,
-            sponsor_transaction_hash=payment.sponsor_transaction_hash,
-            sponsored=payment.sponsored,
-            status=payment.status,
+            payment_id=str(payment.id),  # type: ignore
+            transaction_hash=payment.transaction_hash,  # type: ignore
+            sponsor_transaction_hash=payment.sponsor_transaction_hash,  # type: ignore
+            sponsored=payment.sponsored,  # type: ignore
+            status=payment.status,  # type: ignore
             message="Payment created with sponsorship (placeholder)",
         )
     except PaymentAlreadyProcessedError:

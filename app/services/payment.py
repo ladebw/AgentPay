@@ -70,8 +70,8 @@ class PaymentService:
 
             # Process payment on blockchain
             transaction_hash = await self._send_transaction(payment)
-            payment.transaction_hash = transaction_hash
-            payment.status = PaymentStatus.COMPLETED
+            payment.transaction_hash = transaction_hash  # type: ignore
+            payment.status = PaymentStatus.COMPLETED  # type: ignore
 
             await self.db.commit()
 
@@ -99,7 +99,7 @@ class PaymentService:
         invoice = result.scalar_one_or_none()
         if not invoice:
             raise ValueError(f"Invoice {invoice_id} not found")
-        return invoice.to_agent_id
+        return invoice.to_agent_id  # type: ignore
 
     async def _send_transaction(self, payment: Payment) -> str:
         """Send transaction to blockchain."""
@@ -109,7 +109,7 @@ class PaymentService:
         to_agent = result.scalar_one_or_none()
         if not to_agent:
             raise ValueError(f"Recipient agent {payment.to_agent_id} not found")
-        to_address = to_agent.wallet_address
+        to_address: str = to_agent.wallet_address  # type: ignore
 
         # Determine sender address (system's hot wallet)
         # If blockchain client has a key manager, use its address

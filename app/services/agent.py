@@ -84,6 +84,6 @@ class AgentService(BaseService[Agent]):
         agent = await self.get(agent_id)
         if not agent:
             return None
-        agent.permissions = permissions
+        agent.permissions = permissions  # type: ignore
         await self.db.commit()
         return agent

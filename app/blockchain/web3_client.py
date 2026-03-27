@@ -64,7 +64,8 @@ class Web3BlockchainClient(BlockchainClient):
         amount_wei = int(amount * (10**decimals))
 
         # Build transaction
-        nonce = self.w3.eth.get_transaction_count(from_address)
+        from_address_checksum = self.w3.to_checksum_address(from_address)
+        nonce = self.w3.eth.get_transaction_count(from_address_checksum)
         tx = self.usdc_contract.functions.transfer(
             self.w3.to_checksum_address(to_address), amount_wei
         ).build_transaction(
@@ -73,7 +74,7 @@ class Web3BlockchainClient(BlockchainClient):
                 "gas": 200000,
                 "gasPrice": self.w3.eth.gas_price,
                 "nonce": nonce,
-                "from": from_address,
+                "from": from_address_checksum,
             }
         )
 
@@ -82,8 +83,10 @@ class Web3BlockchainClient(BlockchainClient):
             key_manager if key_manager is not None else self.key_manager
         )
         if signing_key_manager:
-            signed_tx_hex = await signing_key_manager.sign_transaction(tx)
-            signed_tx = self.w3.eth.send_raw_transaction(signed_tx_hex)
+            # Convert TxParams to dict for signing
+            tx_dict = dict(tx)
+            signed_tx_hex = await signing_key_manager.sign_transaction(tx_dict)
+            signed_tx = self.w3.eth.send_raw_transaction(signed_tx_hex.encode())
         elif self.private_key:
             signed_tx = self.w3.eth.account.sign_transaction(tx, self.private_key)
             signed_tx = self.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
@@ -94,10 +97,10 @@ class Web3BlockchainClient(BlockchainClient):
         receipt = self.w3.eth.wait_for_transaction_receipt(signed_tx)
 
         return {
-            "hash": receipt.transactionHash.hex(),
-            "block_number": receipt.blockNumber,
-            "gas_used": receipt.gasUsed,
-            "status": "completed" if receipt.status == 1 else "failed",
+            "hash": receipt["transactionHash"].hex(),
+            "block_number": receipt["blockNumber"],
+            "gas_used": receipt["gasUsed"],
+            "status": "completed" if receipt["status"] == 1 else "failed",
         }
 
     async def create_wallet(self) -> Dict[str, str]:
@@ -108,7 +111,9 @@ class Web3BlockchainClient(BlockchainClient):
         }
 
     async def get_transaction_receipt(self, tx_hash: str) -> Dict[str, Any]:
-        receipt = self.w3.eth.get_transaction_receipt(tx_hash)
+        from eth_typing import HexStr
+
+        receipt = self.w3.eth.get_transaction_receipt(HexStr(tx_hash))
         return dict(receipt) if receipt else {}
 
     async def estimate_gas(

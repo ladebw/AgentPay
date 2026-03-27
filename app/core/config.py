@@ -19,8 +19,8 @@ class Settings(BaseSettings):
     database_url: str = "postgresql://postgres:postgres@localhost/agentpay"
 
     # Security
-    api_key_salt: str = Field(default="change-me", env="API_KEY_SALT")
-    secret_key: str = Field(default="change-me", env="SECRET_KEY")
+    api_key_salt: str = "change-me"
+    secret_key: str = "change-me"
 
     # Blockchain
     chain_id: int = 137  # Polygon Mainnet
@@ -36,9 +36,7 @@ class Settings(BaseSettings):
     # Webhooks
     webhook_retry_attempts: int = 3
     webhook_timeout: int = 5
-    webhook_signing_secret: str = Field(
-        default="change-me", env="WEBHOOK_SIGNING_SECRET"
-    )
+    webhook_signing_secret: str = "change-me"
 
     # Rate Limiting
     rate_limit_enabled: bool = True
@@ -53,15 +51,15 @@ class Settings(BaseSettings):
     max_gas_price_gwei: int = 500
 
     # Gas Sponsorship
-    enable_gas_sponsorship: bool = Field(False, env="ENABLE_GAS_SPONSORSHIP")
+    enable_gas_sponsorship: bool = False
     sponsor_mode: Literal["defender", "biconomy", "custom"] = "defender"
-    max_sponsor_amount_usd: float = Field(10.0, env="MAX_SPONSOR_AMOUNT_USD")
+    max_sponsor_amount_usd: float = 10.0
     sponsor_whitelist: List[str] = []  # Agent IDs allowed for sponsorship
     # Defender Config
-    defender_api_key: Optional[str] = Field(None, env="DEFENDER_API_KEY")
-    defender_api_secret: Optional[str] = Field(None, env="DEFENDER_API_SECRET")
-    defender_relayer_id: Optional[str] = Field(None, env="DEFENDER_RELAYER_ID")
-    forwarder_address: Optional[str] = Field(None, env="FORWARDER_ADDRESS")
+    defender_api_key: Optional[str] = None
+    defender_api_secret: Optional[str] = None
+    defender_relayer_id: Optional[str] = None
+    forwarder_address: Optional[str] = None
 
     # Logging
     log_level: str = "INFO"
@@ -101,10 +99,12 @@ class Settings(BaseSettings):
                 )
         return v
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = False
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": False,
+        "env_prefix": "",
+    }
 
 
 def get_secret(secret_name: str) -> str:
