@@ -85,6 +85,9 @@ class PaymentService:
                 )
 
             return payment
+        except (PaymentAlreadyProcessedError, PaymentProcessingLockError):
+            # Re-raise these specific exceptions without wrapping
+            raise
         except Exception as e:
             await self.db.rollback()
             raise PaymentProcessingError(f"Payment processing failed: {str(e)}")

@@ -5,13 +5,14 @@ class Base(DeclarativeBase):
     pass
 
 
-from .agent import Agent
-from .idempotency_key import IdempotencyKey
-from .invoice import Invoice
-from .payment import Payment
-from .transaction import BlockchainTransaction
-from .wallet import Wallet
-from .webhook import Webhook
+# Import all models so SQLAlchemy can resolve string references
+from .agent import Agent  # noqa: E402
+from .wallet import Wallet  # noqa: E402
+from .invoice import Invoice  # noqa: E402
+from .payment import Payment  # noqa: E402
+from .webhook import Webhook  # noqa: E402
+from .transaction import BlockchainTransaction  # noqa: E402
+from .idempotency_key import IdempotencyKey  # noqa: E402
 
 __all__ = [
     "Base",
