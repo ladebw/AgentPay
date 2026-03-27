@@ -45,11 +45,14 @@ async def fund_wallet(
     # or transfer from admin.
     if isinstance(blockchain, MockBlockchainClient):
         blockchain.balances[current_agent.wallet_address] = (  # type: ignore
-            blockchain.balances.get(current_agent.wallet_address, 0.0) + amount  # type: ignore
+            blockchain.balances.get(current_agent.wallet_address, 0.0)  # type: ignore
+            + amount
         )
         return {
             "message": f"Funded {amount} USDC",
-            "new_balance": blockchain.balances[current_agent.wallet_address],  # type: ignore
+            "new_balance": blockchain.balances[
+                current_agent.wallet_address  # type: ignore
+            ],
         }
     else:
         raise HTTPException(

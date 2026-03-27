@@ -2,7 +2,6 @@ import logging
 import os
 from typing import Any, Dict
 
-from eth_account import Account
 from eth_account.messages import encode_typed_data
 
 from app.blockchain.kms_key_manager import KMSKeyManager
