@@ -217,9 +217,9 @@ class KMSKeyManager(KeyManager):
                 format=serialization.PublicFormat.UncompressedPoint,
             )
             self._public_key_bytes = uncompressed
-        assert self._public_key_bytes is not None, (
-            "Public key bytes should have been computed"
-        )
+        assert (
+            self._public_key_bytes is not None
+        ), "Public key bytes should have been computed"
         return self._public_key_bytes
 
     def _parse_der_signature(self, der_signature: bytes) -> tuple[int, int]:
