@@ -8,7 +8,7 @@ from sqlalchemy.orm import relationship
 from . import Base
 
 
-def utcnow():
+def utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
@@ -27,5 +27,5 @@ class Wallet(Base):
     # Relationships
     agent = relationship("Agent", back_populates="wallets")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Wallet(address='{self.address}', agent={self.agent_id})>"

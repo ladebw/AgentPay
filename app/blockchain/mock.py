@@ -23,7 +23,7 @@ class MockKeyManager(KeyManager):
 class MockBlockchainClient(BlockchainClient):
     """Mock blockchain client for MVP testing."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.balances: Dict[str, float] = {}
         self.transactions: Dict[str, Dict[str, Any]] = {}
 

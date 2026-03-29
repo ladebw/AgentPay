@@ -8,7 +8,7 @@ from sqlalchemy.orm import relationship
 from . import Base
 
 
-def utcnow():
+def utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
@@ -42,7 +42,7 @@ class Agent(Base):
         "Webhook", back_populates="agent", cascade="all, delete-orphan"
     )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"<Agent(id={self.id}, name='{self.name}', wallet='{self.wallet_address}')>"
         )

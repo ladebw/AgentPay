@@ -1,4 +1,4 @@
-from typing import Any, Generic, Optional, Protocol, Type, TypeVar
+from typing import Any, Generic, Optional, Protocol, Type, TypeVar, List, Dict
 
 from sqlalchemy import Column, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -25,13 +25,13 @@ class BaseService(Generic[T]):
         result = await self.db.execute(stmt)
         return result.scalar_one_or_none()
 
-    async def create(self, **kwargs) -> T:
+    async def create(self, **kwargs: Any) -> T:
         obj = self.model_class(**kwargs)
         self.db.add(obj)
         await self.db.flush()
         return obj
 
-    async def update(self, id: str, **kwargs) -> Optional[T]:
+    async def update(self, id: str, **kwargs: Any) -> Optional[T]:
         obj = await self.get(id)
         if not obj:
             return None
@@ -48,7 +48,7 @@ class BaseService(Generic[T]):
         await self.db.flush()
         return True
 
-    async def list(self, skip: int = 0, limit: int = 100):
+    async def list(self, skip: int = 0, limit: int = 100) -> List[T]:
         stmt = select(self.model_class).offset(skip).limit(limit)
         result = await self.db.execute(stmt)
         return result.scalars().all()

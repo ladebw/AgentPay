@@ -9,7 +9,7 @@ from sqlalchemy.orm import relationship
 from . import Base
 
 
-def utcnow():
+def utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
@@ -40,5 +40,5 @@ class Webhook(Base):
     # Relationships
     agent = relationship("Agent", back_populates="webhooks")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Webhook(id={self.id}, url='{self.url}', status='{self.status}')>"

@@ -9,7 +9,7 @@ from sqlalchemy.orm import relationship
 from . import Base
 
 
-def utcnow():
+def utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
@@ -61,5 +61,5 @@ class Payment(Base):
         "BlockchainTransaction", uselist=False, back_populates="payment"
     )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Payment(id={self.id}, amount={self.amount}, status='{self.status}')>"

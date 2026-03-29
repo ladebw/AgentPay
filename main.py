@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Response, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.routers import agents, wallets, invoices, payments, webhooks, sponsor
+from app.api.routers import agents, wallets, sponsor
 from prometheus_client import generate_latest, REGISTRY, Counter, Histogram
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -12,6 +12,7 @@ from sqlalchemy import text
 from app.core.database import engine
 from app.blockchain import get_blockchain_client
 import asyncio
+from typing import Dict, Any
 app = FastAPI(
     title="AGENTPAY API",
     description="On-Chain Identity + Payment Infrastructure for AI Agents",
@@ -38,20 +39,17 @@ app.add_exception_handler(429, _rate_limit_exceeded_handler)
 # Include routers
 app.include_router(agents.router, prefix="/api/v1")
 app.include_router(wallets.router, prefix="/api/v1")
-app.include_router(invoices.router, prefix="/api/v1")
-app.include_router(payments.router, prefix="/api/v1")
-app.include_router(webhooks.router, prefix="/api/v1")
 app.include_router(sponsor.router, prefix="/api/v1")
 
 
 @app.get("/")
-async def root():
+async def root() -> Dict[str, str]:
     return {"message": "AGENTPAY API"}
 
 
 @app.get("/health")
 @limiter.exempt
-async def health_check():
+async def health_check() -> Dict[str, Any]:
     """Health check endpoint for load balancers"""
     try:
         # Check database connection
@@ -79,7 +77,7 @@ async def health_check():
 
 @app.get("/metrics")
 @limiter.exempt
-async def metrics():
+async def metrics() -> Response:
     """Prometheus metrics endpoint."""
     from prometheus_client import generate_latest
     return Response(

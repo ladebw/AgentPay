@@ -1,5 +1,8 @@
 import time
 from functools import wraps
+from typing import Callable, TypeVar, Any, cast
+
+T = TypeVar("T")
 
 
 class CircuitBreakerOpenError(Exception):
@@ -7,16 +10,16 @@ class CircuitBreakerOpenError(Exception):
 
 
 class CircuitBreaker:
-    def __init__(self, failure_threshold=5, recovery_timeout=60):
+    def __init__(self, failure_threshold: int = 5, recovery_timeout: int = 60) -> None:
         self.failure_threshold = failure_threshold
         self.recovery_timeout = recovery_timeout
         self.failures = 0
-        self.last_failure_time = 0
+        self.last_failure_time: float = 0.0
         self.state = "CLOSED"  # CLOSED, OPEN, HALF_OPEN
 
-    def call(self, func):
+    def call(self, func: Callable[..., T]) -> Callable[..., T]:
         @wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> T:
             if self.state == "OPEN":
                 if time.time() - self.last_failure_time > self.recovery_timeout:
                     self.state = "HALF_OPEN"

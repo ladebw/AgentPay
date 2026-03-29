@@ -8,7 +8,7 @@ from sqlalchemy.orm import relationship
 from . import Base
 
 
-def utcnow():
+def utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
@@ -30,5 +30,5 @@ class IdempotencyKey(Base):
     # Relationships
     agent = relationship("Agent")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<IdempotencyKey(key='{self.key}', agent={self.agent_id})>"

@@ -30,23 +30,25 @@ SPONSOR_DAILY_SPENT_USD = Gauge(
 )
 
 
-def record_sponsored_transaction(chain: str, agent_tier: str, gas_cost_usd: float):
+def record_sponsored_transaction(
+    chain: str, agent_tier: str, gas_cost_usd: float
+) -> None:
     """Record metrics for a successful sponsored transaction."""
     SPONSORED_TX_COUNT.labels(chain=chain, agent_tier=agent_tier).inc()
     if gas_cost_usd is not None:
         SPONSOR_GAS_COST.observe(gas_cost_usd)
 
 
-def record_sponsorship_failure(reason: str):
+def record_sponsorship_failure(reason: str) -> None:
     """Record a sponsorship failure."""
     SPONSOR_FAILURE_COUNT.labels(reason=reason).inc()
 
 
-def update_eligible_agents(count: int):
+def update_eligible_agents(count: int) -> None:
     """Update gauge with number of eligible agents."""
     SPONSOR_ELIGIBLE_AGENTS.set(count)
 
 
-def update_daily_spent(agent_id: str, amount_usd: float):
+def update_daily_spent(agent_id: str, amount_usd: float) -> None:
     """Update daily spent for an agent."""
     SPONSOR_DAILY_SPENT_USD.labels(agent_id=agent_id).set(amount_usd)
